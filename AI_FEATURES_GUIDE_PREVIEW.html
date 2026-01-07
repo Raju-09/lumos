@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Features Guide - Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 0.5em;
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 0.3em;
+        }
+        h2 {
+            font-size: 1.8em;
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+            color: #34495e;
+        }
+        h3 {
+            font-size: 1.4em;
+            margin-top: 1.2em;
+            margin-bottom: 0.6em;
+            color: #555;
+        }
+        p {
+            margin-bottom: 1em;
+        }
+        ul, ol {
+            margin-left: 2em;
+            margin-bottom: 1em;
+        }
+        li {
+            margin-bottom: 0.5em;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1em 0;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+        blockquote {
+            border-left: 4px solid #3498db;
+            padding-left: 1em;
+            margin: 1em 0;
+            color: #666;
+            font-style: italic;
+        }
+        hr {
+            border: none;
+            border-top: 2px solid #e0e0e0;
+            margin: 2em 0;
+        }
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        em {
+            color: #555;
+        }
+        .emoji {
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI-Powered Features - Quick Start Guide</h1>
+
+        <h2><span class="emoji">🎯</span> What's New</h2>
+
+        <p>Lumos now includes <strong>three intelligent systems</strong> that make it a hackathon-winning placement portal:</p>
+
+        <ol>
+            <li><strong>Year-Based Access Control</strong> - Smart feature gating for 1st-4th year students</li>
+            <li><strong>AI Resume Builder</strong> - Role-aware, ATS-optimized resume generation</li>
+            <li><strong>ATS Score Checker</strong> - Job-specific resume analysis with actionable feedback</li>
+        </ol>
+
+        <hr>
+
+        <h2><span class="emoji">🚀</span> Setup Instructions</h2>
+
+        <h3>1. Get Gemini API Key</h3>
+
+        <ol>
+            <li>Go to <a href="https://makersuite.google.com/app/apikey">Google AI Studio</a></li>
+            <li>Create a new API key</li>
+            <li>Add to your <code>.env.local</code> file:</li>
+        </ol>
+
+        <pre><code>NEXT_PUBLIC_GEMINI_API_KEY=your_api_key_here</code></pre>
+
+        <h3>2. Test the Features</h3>
+
+        <h4>Resume Builder</h4>
+        <ol>
+            <li>Navigate to <code>/student/resume-builder</code></li>
+            <li>Enter a target role (e.g., "Software Engineer")</li>
+            <li>Click "Generate Resume with AI"</li>
+            <li>AI will create a tailored, ATS-optimized resume</li>
+            <li>Edit, save, or download</li>
+        </ol>
+
+        <h4>ATS Checker</h4>
+        <ol>
+            <li>Navigate to <code>/student/ats-checker</code></li>
+            <li>Select a job opening</li>
+            <li>Paste your resume content</li>
+            <li>Click "Analyze ATS Score"</li>
+            <li>Get detailed feedback with:
+                <ul>
+                    <li>Overall score (0-100)</li>
+                    <li>Skills, experience, education, keywords breakdown</li>
+                    <li>Strengths</li>
+                    <li>Missing keywords</li>
+                    <li>Improvement suggestions</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h4>Year-Based Access</h4>
+        <ol>
+            <li>During signup, students select their academic year (1-4)</li>
+            <li>Features are automatically filtered:
+                <ul>
+                    <li><strong>1st/2nd Year</strong>: Internships, basic resume builder</li>
+                    <li><strong>3rd/4th Year</strong>: Full placements, advanced features</li>
+                </ul>
+            </li>
+        </ol>
+
+        <hr>
+
+        <h2><span class="emoji">📊</span> How It Works</h2>
+
+        <h3>Resume Generation</h3>
+        <pre><code>Student Data → Gemini AI → ATS-Optimized Resume</code></pre>
+        <ul>
+            <li>AI considers: year, skills, projects, internships</li>
+            <li>Tailors content for target role</li>
+            <li>Uses ATS-friendly keywords</li>
+            <li>Adjusts tone based on experience level</li>
+        </ul>
+
+        <h3>ATS Scoring</h3>
+        <pre><code>Resume + Job Description → Gemini AI → Score + Feedback</code></pre>
+        <ul>
+            <li>Compares resume against JD</li>
+            <li>Scores: skills, experience, education, keywords</li>
+            <li>Identifies missing keywords</li>
+            <li>Provides actionable suggestions</li>
+        </ul>
+
+        <h3>Access Control</h3>
+        <pre><code>Student Year → Access Matrix → Filtered Features</code></pre>
+        <ul>
+            <li>Policy-based (not just UI hiding)</li>
+            <li>Ethical and transparent</li>
+            <li>Encourages skill-building for early years</li>
+        </ul>
+
+        <hr>
+
+        <h2><span class="emoji">🎨</span> UI Features</h2>
+
+        <h3>Resume Builder</h3>
+        <ul>
+            <li>Gradient purple/pink theme</li>
+            <li>Real-time AI generation</li>
+            <li>Editable output</li>
+            <li>Save versions for different roles</li>
+            <li>Download as text file</li>
+        </ul>
+
+        <h3>ATS Checker</h3>
+        <ul>
+            <li>Blue/cyan gradient theme</li>
+            <li>Job selection from available drives</li>
+            <li>Side-by-side input/results</li>
+            <li>Visual score breakdown</li>
+            <li>Color-coded feedback (green/yellow/red)</li>
+        </ul>
+
+        <h3>Navigation</h3>
+        <ul>
+            <li>New tabs in student portal:
+                <ul>
+                    <li>Resume Builder</li>
+                    <li>ATS Checker</li>
+                </ul>
+            </li>
+            <li>Seamless integration with existing features</li>
+        </ul>
+
+        <hr>
+
+        <h2><span class="emoji">🏆</span> Judge Demo Script</h2>
+
+        <blockquote>
+            <p><strong>"Let me show you Lumos's AI-powered features:</strong></p>
+            
+            <p><strong>1. Year-Based Access</strong> (15 sec)</p>
+            <ul>
+                <li>Students select their year during signup</li>
+                <li>Early years focus on internships and skill-building</li>
+                <li>Final years get full placement access</li>
+                <li>Policy-based, not just UI hiding</li>
+            </ul>
+            
+            <p><strong>2. AI Resume Builder</strong> (45 sec)</p>
+            <ul>
+                <li>[Navigate to Resume Builder]</li>
+                <li>Enter target role: "Software Engineer"</li>
+                <li>[Click Generate]</li>
+                <li>AI creates tailored resume in seconds</li>
+                <li>ATS-optimized keywords</li>
+                <li>Year-aware content</li>
+                <li>Can edit and save multiple versions</li>
+            </ul>
+            
+            <p><strong>3. ATS Score Checker</strong> (45 sec)</p>
+            <ul>
+                <li>[Navigate to ATS Checker]</li>
+                <li>Select job opening</li>
+                <li>[Paste resume]</li>
+                <li>[Click Analyze]</li>
+                <li>Real-time AI analysis</li>
+                <li>Score breakdown: 72/100</li>
+                <li>Missing keywords highlighted</li>
+                <li>Actionable suggestions provided</li>
+            </ul>
+            
+            <p><strong>All powered by Gemini AI. Real, explainable, ethical."</strong></p>
+        </blockquote>
+
+        <hr>
+
+        <h2><span class="emoji">📁</span> Files Created</h2>
+
+        <h3>Core Services</h3>
+        <ul>
+            <li><code>src/lib/gemini-ai.ts</code> - AI integration with production prompts</li>
+            <li><code>src/lib/access-control.ts</code> - Year-based feature gating</li>
+        </ul>
+
+        <h3>Pages</h3>
+        <ul>
+            <li><code>src/app/student/resume-builder/page.tsx</code> - Resume generation UI</li>
+            <li><code>src/app/student/ats-checker/page.tsx</code> - ATS scoring UI</li>
+        </ul>
+
+        <h3>Updated Files</h3>
+        <ul>
+            <li><code>src/lib/data-service.ts</code> - Added <code>academicYear</code> and <code>eligibleYears</code> fields</li>
+            <li><code>src/app/student/layout.tsx</code> - Added new navigation items</li>
+            <li><code>src/app/login/page.tsx</code> - Added year selection during signup</li>
+        </ul>
+
+        <hr>
+
+        <h2><span class="emoji">🎯</span> Key Selling Points</h2>
+
+        <h3>Technical Excellence</h3>
+        <ul>
+            <li>✅ Real AI integration (not mock)</li>
+            <li>✅ Production-grade prompts</li>
+            <li>✅ Proper data modeling</li>
+            <li>✅ TypeScript type safety</li>
+        </ul>
+
+        <h3>User Value</h3>
+        <ul>
+            <li>✅ Year-appropriate features</li>
+            <li>✅ Actionable feedback</li>
+            <li>✅ Career guidance</li>
+            <li>✅ Skill-building focus</li>
+        </ul>
+
+        <h3>Judge Appeal</h3>
+        <ul>
+            <li>✅ Explainable AI</li>
+            <li>✅ Ethical design</li>
+            <li>✅ Mature architecture</li>
+            <li>✅ Real-world applicability</li>
+        </ul>
+
+        <hr>
+
+        <h2><span class="emoji">🐛</span> Troubleshooting</h2>
+
+        <h3>"Failed to generate resume"</h3>
+        <ul>
+            <li>Check Gemini API key in <code>.env.local</code></li>
+            <li>Ensure API key is valid</li>
+            <li>Check browser console for errors</li>
+        </ul>
+
+        <h3>"Failed to calculate ATS score"</h3>
+        <ul>
+            <li>Same as above</li>
+            <li>Ensure job description is not empty</li>
+            <li>Check resume content is valid</li>
+        </ul>
+
+        <h3>Year-based features not working</h3>
+        <ul>
+            <li>Ensure <code>academicYear</code> is set during signup</li>
+            <li>Check localStorage for <code>lumos_user</code> data</li>
+            <li>Verify year is 1-4</li>
+        </ul>
+
+        <hr>
+
+        <h2><span class="emoji">🚀</span> Next Steps</h2>
+
+        <ol>
+            <li>✅ Get Gemini API key</li>
+            <li>✅ Test Resume Builder</li>
+            <li>✅ Test ATS Checker</li>
+            <li>✅ Test year-based access</li>
+            <li>Create sample drives with <code>eligibleYears</code> field</li>
+            <li>Test end-to-end flow</li>
+            <li>Prepare demo for judges</li>
+        </ol>
+
+        <hr>
+
+        <p><strong>You're ready to win! 🏆</strong></p>
+    </div>
+</body>
+</html>

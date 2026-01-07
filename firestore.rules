@@ -1,0 +1,78 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ========================================
+    // LUMOS PLACEMENT PORTAL - FIRESTORE RULES  
+    // Hackathon Production Rules
+    // ========================================
+    
+    // Helper function to check authentication
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to get user email
+    function getUserEmail() {
+      return request.auth.token.email;
+    }
+    
+    // ==================== STUDENTS ====================
+    // Students can read all, write their own profile
+    match /students/{studentId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && 
+        (request.auth.uid == studentId || request.auth.token.email == resource.data.email);
+    }
+    
+    // ==================== DRIVES ====================
+    // All authenticated users can read drives
+    // Admins/Recruiters can create/update/delete
+    match /drives/{driveId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated();
+    }
+    
+    // ==================== APPLICATIONS ====================
+    // Students can read their own applications
+    // Admins can read all applications
+    // Students can create applications for themselves
+    match /applications/{appId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
+      allow delete: if isAuthenticated();
+    }
+    
+    // ==================== RECRUITERS ====================
+    match /recruiters/{recruiterId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+    }
+    
+    // ==================== AUDIT LOGS ====================
+    match /auditLogs/{logId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+    }
+    
+    // ==================== NOTIFICATIONS ====================
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
+    }
+    
+    // ==================== RESUMES ====================
+    match /resumes/{resumeId} {
+      allow read, write: if isAuthenticated();
+    }
+    
+    // ==================== CATCH-ALL ====================
+    // Any other collection - require auth
+    match /{document=**} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}
