@@ -177,11 +177,19 @@ export default function RecruiterDashboard() {
                 className="flex flex-col md:flex-row md:items-start justify-between gap-4"
             >
                 <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 border-2 border-gray-100 dark:border-slate-700 flex items-center justify-center text-3xl font-bold text-blue-600 dark:text-blue-500 shadow-sm">
-                        {mockRecruiterData.logo}
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 border-2 border-gray-100 dark:border-slate-700 flex items-center justify-center text-3xl font-bold text-white shadow-lg">
+                        {(() => {
+                            const user = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('lumos_user') || '{}') : {};
+                            return (user.name || 'R').charAt(0).toUpperCase();
+                        })()}
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold mb-1 text-gray-900 dark:text-white">Welcome, {mockRecruiterData.company}</h1>
+                        <h1 className="text-3xl font-bold mb-1 text-gray-900 dark:text-white">
+                            Welcome, {(() => {
+                                const user = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('lumos_user') || '{}') : {};
+                                return user.name || 'Recruiter';
+                            })()}
+                        </h1>
                         <p className="text-gray-500 dark:text-gray-400">Manage your campus drives and view candidates</p>
                     </div>
                 </div>
