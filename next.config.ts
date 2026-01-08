@@ -27,6 +27,12 @@ const nextConfig: NextConfig = {
     optimizeCss: true,
   },
 
+  // Disable the development indicator
+  devIndicators: {
+    buildActivity: false,
+    buildActivityPosition: 'bottom-right',
+  },
+
   // Headers for better caching
   async headers() {
     return [
