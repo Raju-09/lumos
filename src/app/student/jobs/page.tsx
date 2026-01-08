@@ -4,12 +4,12 @@
  */
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Search, Briefcase, MapPin, DollarSign, ExternalLink, Loader2 } from 'lucide-react';
 import { fetchAggregatedJobs, LiveJob } from '@/lib/live-jobs-api';
 
-export default function LiveJobsPage() {
+function LiveJobsContent() {
     const searchParams = useSearchParams();
     const queryFromUrl = searchParams.get('q') || 'software engineer';
 
@@ -178,6 +178,18 @@ export default function LiveJobsPage() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function LiveJobsPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+            </div>
+        }>
+            <LiveJobsContent />
+        </Suspense>
     );
 }
 
