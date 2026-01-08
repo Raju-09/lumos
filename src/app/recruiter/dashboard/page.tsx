@@ -589,22 +589,11 @@ function StudentRow({ student, index }: any) {
                     </button>
                     <button
                         onClick={async () => {
-                            try {
-                                // In a real implementation, you would fetch from Firebase Storage
-                                // For now, we'll create a mock download
-                                const resumeUrl = student.resume || '#';
-
-                                if (resumeUrl && resumeUrl !== '#') {
-                                    // Open in new tab or download
-                                    window.open(resumeUrl, '_blank');
-                                } else {
-                                    // Create a mock PDF for demonstration
-                                    alert(`Resume for ${student.name}\n\nResume URL: ${student.resume || 'Not uploaded'}\n\nIn production: This would download from Firebase Storage.`);
-                                }
-                            } catch (error) {
-                                console.error('Error downloading resume:', error);
-                                alert('Error downloading resume');
-                            }
+                            alert(`📄 Resume: ${student.resume || 'Not uploaded'}\n\n` +
+                                `Student: ${student.name}\n` +
+                                `Roll No: ${student.rollNo}\n\n` +
+                                `ℹ️ In production, this would download the resume from Firebase Storage.\n\n` +
+                                `For demo purposes, the resume filename is shown above.`);
                         }}
                         className="flex-1 sm:flex-none px-3 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors text-sm font-medium flex items-center justify-center gap-1"
                     >

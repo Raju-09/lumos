@@ -43,8 +43,8 @@ export default function RecruiterLayout({ children }: { children: ReactNode }) {
 
                     <div className="flex items-center gap-4">
                         <div className="text-right hidden sm:block">
-                            <p className="text-sm font-medium text-white">TechCorp Inc.</p>
-                            <p className="text-xs text-gray-400">recruiter@techcorp.com</p>
+                            <p className="text-sm font-medium text-white">{userData?.name || 'Recruiter'}</p>
+                            <p className="text-xs text-gray-400">{userData?.email || 'recruiter@company.com'}</p>
                         </div>
                         <Notifications />
                         <ThemeToggle />
