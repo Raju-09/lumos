@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState } from "react";
-import { Drive } from "@/types/drive";
+import { Drive } from "@/lib/data-service";
 
 export interface Application {
     id: string;
