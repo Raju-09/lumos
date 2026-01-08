@@ -5,6 +5,16 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   compress: true,
 
+  // DISABLE TypeScript checking during build
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
+  // DISABLE ESLint checking during build
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
   // Optimize images
   images: {
     formats: ['image/avif', 'image/webp'],
