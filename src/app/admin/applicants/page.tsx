@@ -130,7 +130,7 @@ export default function ApplicantsManagementPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 p-6">
+            <div className="min-h-screen bg-gray-50 dark:bg-slate-950 p-6">
                 <div className="mb-6 border-b border-gray-200 pb-4">
                     <h1 className="text-2xl font-semibold text-gray-900">Applicants Management</h1>
                     <p className="text-sm text-gray-600 mt-1">Loading...</p>

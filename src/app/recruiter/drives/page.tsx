@@ -54,7 +54,12 @@ export default function RecruiterDrivesPage() {
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white">My Drives</h1>
                     <p className="text-gray-500 dark:text-gray-400">Manage your job postings and applications</p>
                 </div>
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-sm">
+                <button
+                    onClick={() => {
+                        alert('Create New Drive\n\nThis feature will open a modal to create a new campus drive.\n\nIn production, this would:\n- Open a form modal\n- Collect drive details (role, location, eligibility, etc.)\n- Save to Firebase\n- Notify eligible students');
+                    }}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-sm"
+                >
                     <Plus className="w-4 h-4" />
                     <span>Create New Drive</span>
                 </button>

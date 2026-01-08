@@ -65,7 +65,7 @@ export default function PlacementHistoryPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+            <div className="min-h-screen bg-gray-50 dark:bg-slate-950 p-6 flex items-center justify-center">
                 <div className="text-gray-600">Loading placement history...</div>
             </div>
         );
@@ -73,7 +73,7 @@ export default function PlacementHistoryPage() {
 
     if (!studentData) {
         return (
-            <div className="min-h-screen bg-gray-50 p-6">
+            <div className="min-h-screen bg-gray-50 dark:bg-slate-950 p-6">
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
                     <p className="text-yellow-800 mb-4">Please login to view your placement history</p>
                     <a href="/login" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
@@ -85,7 +85,7 @@ export default function PlacementHistoryPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 p-6">
+        <div className="min-h-screen bg-gray-50 dark:bg-slate-950 p-6">
             {/* Header */}
             <div className="mb-6 border-b border-gray-200 pb-4">
                 <div className="flex items-center justify-between">

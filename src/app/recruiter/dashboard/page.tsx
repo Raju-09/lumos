@@ -278,7 +278,26 @@ export default function RecruiterDashboard() {
                                     <Filter className="w-4 h-4" />
                                     <span className="hidden sm:inline">Filter</span>
                                 </button>
-                                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all flex items-center gap-2">
+                                <button
+                                    onClick={() => {
+                                        // Export to CSV
+                                        const csvContent = [
+                                            ['Name', 'Roll No', 'Branch', 'CGPA', 'Email', 'Status'].join(','),
+                                            ...filteredStudents.map(s =>
+                                                [s.name, s.rollNo, s.branch, s.cgpa, s.email, s.status].join(',')
+                                            )
+                                        ].join('\n');
+
+                                        const blob = new Blob([csvContent], { type: 'text/csv' });
+                                        const url = window.URL.createObjectURL(blob);
+                                        const a = document.createElement('a');
+                                        a.href = url;
+                                        a.download = `candidates_${selectedDrive.role.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.csv`;
+                                        a.click();
+                                        window.URL.revokeObjectURL(url);
+                                    }}
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all flex items-center gap-2"
+                                >
                                     <Download className="w-4 h-4" />
                                     <span className="hidden sm:inline">Export Resumes</span>
                                 </button>
@@ -457,7 +476,13 @@ function StudentRow({ student, index }: any) {
                     <button className="flex-1 sm:flex-none px-3 py-2 bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-600 transition-colors text-sm font-medium">
                         Profile
                     </button>
-                    <button className="flex-1 sm:flex-none px-3 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors text-sm font-medium flex items-center justify-center gap-1">
+                    <button
+                        onClick={() => {
+                            // Simulate resume download
+                            alert(`Downloading resume for ${student.name}\n\nNote: In production, this would download from Firebase Storage.\nResume: ${student.resume}`);
+                        }}
+                        className="flex-1 sm:flex-none px-3 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors text-sm font-medium flex items-center justify-center gap-1"
+                    >
                         <FileDown className="w-4 h-4" />
                         Resume
                     </button>
