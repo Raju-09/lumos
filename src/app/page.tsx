@@ -1,17 +1,32 @@
 /**
- * Lumos Landing Page - Beautiful Purple Gradient Design
- * Matches the uploaded UI design
+ * Lumos Landing Page with Integrated Login/Signup
+ * No redirect - login directly on landing page
  */
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { Sparkles, Users, Shield, Building2, ArrowRight, BarChart, Target, Lock, TrendingUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, Users, Shield, Building2, ArrowRight, BarChart, Target, Lock, TrendingUp, Mail, User, Eye, EyeOff } from 'lucide-react';
+import { auth } from '@/lib/firebase';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+
+type UserRole = 'STUDENT' | 'ADMIN' | 'RECRUITER';
 
 export default function LandingPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
+  const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    name: '',
+    rollNumber: '',
+    academicYear: 4 as 1 | 2 | 3 | 4
+  });
 
   useEffect(() => {
     // Check if user is already logged in
@@ -30,8 +45,81 @@ export default function LandingPage() {
     }
   }, [router]);
 
-  const handleRoleSelect = (role: string) => {
-    router.push('/login');
+  const handleRoleSelect = (role: UserRole) => {
+    setSelectedRole(role);
+    setError('');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    if (!selectedRole) {
+      setError('Please select a role');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      let userCredential;
+
+      if (activeTab === 'signup') {
+        userCredential = await createUserWithEmailAndPassword(
+          auth,
+          formData.email,
+          formData.password
+        );
+
+        await updateProfile(userCredential.user, {
+          displayName: formData.name || 'User'
+        });
+      } else {
+        userCredential = await signInWithEmailAndPassword(
+          auth,
+          formData.email,
+          formData.password
+        );
+      }
+
+      const userData = {
+        uid: userCredential.user.uid,
+        email: userCredential.user.email,
+        name: userCredential.user.displayName || formData.name,
+        role: selectedRole,
+        rollNumber: formData.rollNumber || formData.email,
+        academicYear: selectedRole === 'STUDENT' ? formData.academicYear : undefined,
+        loginTime: new Date().toISOString()
+      };
+
+      localStorage.setItem('lumos_user', JSON.stringify(userData));
+
+      const routes = {
+        STUDENT: '/student/opportunities',
+        ADMIN: '/admin/institutional',
+        RECRUITER: '/recruiter/dashboard'
+      };
+
+      router.push(routes[selectedRole]);
+    } catch (err: any) {
+      console.error('Auth error:', err);
+
+      if (err.code === 'auth/email-already-in-use') {
+        setError('This email is already registered. Please login instead.');
+      } else if (err.code === 'auth/invalid-email') {
+        setError('Invalid email address.');
+      } else if (err.code === 'auth/weak-password') {
+        setError('Password should be at least 6 characters.');
+      } else if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+        setError('Invalid email or password.');
+      } else if (err.code === 'auth/invalid-credential') {
+        setError('Invalid credentials. Please check your email and password.');
+      } else {
+        setError('Authentication failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -72,9 +160,13 @@ export default function LandingPage() {
 
             {/* Welcome Text */}
             <div>
-              <h2 className="text-3xl font-bold mb-3">Welcome Back!</h2>
+              <h2 className="text-3xl font-bold mb-3">
+                {activeTab === 'signin' ? 'Welcome Back!' : 'Get Started Free'}
+              </h2>
               <p className="text-purple-100 text-lg">
-                Your intelligent placement journey continues here.
+                {activeTab === 'signin'
+                  ? 'Your intelligent placement journey continues here.'
+                  : 'Join the future of campus placements.'}
               </p>
             </div>
 
@@ -100,7 +192,7 @@ export default function LandingPage() {
             </div>
           </motion.div>
 
-          {/* Right Side - Role Selection Card */}
+          {/* Right Side - Auth Card */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -110,92 +202,186 @@ export default function LandingPage() {
             {/* Tab Switcher */}
             <div className="flex gap-2 mb-6 bg-white/10 p-1 rounded-xl">
               <button
-                onClick={() => setActiveTab('signin')}
+                onClick={() => { setActiveTab('signin'); setSelectedRole(null); setError(''); }}
                 className={`flex-1 py-2.5 rounded-lg font-medium transition-all ${activeTab === 'signin'
-                  ? 'bg-white text-purple-600 shadow-lg'
-                  : 'text-white/70 hover:text-white'
+                    ? 'bg-white text-purple-600 shadow-lg'
+                    : 'text-white/70 hover:text-white'
                   }`}
               >
                 Sign In
               </button>
               <button
-                onClick={() => setActiveTab('signup')}
+                onClick={() => { setActiveTab('signup'); setSelectedRole(null); setError(''); }}
                 className={`flex-1 py-2.5 rounded-lg font-medium transition-all ${activeTab === 'signup'
-                  ? 'bg-white text-purple-600 shadow-lg'
-                  : 'text-white/70 hover:text-white'
+                    ? 'bg-white text-purple-600 shadow-lg'
+                    : 'text-white/70 hover:text-white'
                   }`}
               >
                 Sign Up
               </button>
             </div>
 
-            {/* Role Selection */}
-            <div className="space-y-3">
-              <p className="text-white/80 text-sm mb-4">Select your role to continue</p>
+            <AnimatePresence mode="wait">
+              {!selectedRole ? (
+                <motion.div
+                  key="role-select"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="space-y-3"
+                >
+                  <p className="text-white/80 text-sm mb-4">Select your role to continue</p>
 
-              {/* Student Card */}
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => handleRoleSelect('STUDENT')}
-                className="w-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-xl p-4 text-left transition-all group"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-white/20 to-white/10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Users className="w-6 h-6 text-white" />
+                  {/* Student Card */}
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleRoleSelect('STUDENT')}
+                    className="w-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-xl p-4 text-left transition-all group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-gradient-to-br from-white/20 to-white/10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <Users className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <div className="font-semibold text-white">Student</div>
+                          <div className="text-sm text-white/70">Track your placement journey</div>
+                        </div>
+                      </div>
+                      <ArrowRight className="w-5 h-5 text-white/50 group-hover:translate-x-1 transition-transform" />
                     </div>
+                  </motion.button>
+
+                  {/* Placement Cell Card */}
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleRoleSelect('ADMIN')}
+                    className="w-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-xl p-4 text-left transition-all group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-gradient-to-br from-white/20 to-white/10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <Shield className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <div className="font-semibold text-white">Placement Cell</div>
+                          <div className="text-sm text-white/70">Manage institutional placements</div>
+                        </div>
+                      </div>
+                      <ArrowRight className="w-5 h-5 text-white/50 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </motion.button>
+
+                  {/* Recruiter Card */}
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleRoleSelect('RECRUITER')}
+                    className="w-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-xl p-4 text-left transition-all group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-gradient-to-br from-white/20 to-white/10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <Building2 className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <div className="font-semibold text-white">Recruiter</div>
+                          <div className="text-sm text-white/70">Find verified campus talent</div>
+                        </div>
+                      </div>
+                      <ArrowRight className="w-5 h-5 text-white/50 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </motion.button>
+                </motion.div>
+              ) : (
+                <motion.form
+                  key="auth-form"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  onSubmit={handleSubmit}
+                  className="space-y-4"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRole(null)}
+                    className="text-white/70 hover:text-white text-sm mb-4"
+                  >
+                    ← Change role
+                  </button>
+
+                  {error && (
+                    <div className="bg-red-500/20 border border-red-500/50 text-white px-4 py-3 rounded-lg text-sm">
+                      {error}
+                    </div>
+                  )}
+
+                  {activeTab === 'signup' && (
                     <div>
-                      <div className="font-semibold text-white">Student</div>
-                      <div className="text-sm text-white/70">Track your placement journey</div>
+                      <label className="block text-white/80 text-sm mb-2">Full Name</label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
+                        <input
+                          type="text"
+                          required
+                          value={formData.name}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, name: e.target.value })}
+                          className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50"
+                          placeholder="Enter your name"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-white/80 text-sm mb-2">Email</label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
+                      <input
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50"
+                        placeholder="your@email.com"
+                      />
                     </div>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-white/50 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </motion.button>
 
-              {/* Placement Cell Card */}
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => handleRoleSelect('ADMIN')}
-                className="w-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-xl p-4 text-left transition-all group"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-white/20 to-white/10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Shield className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-white">Placement Cell</div>
-                      <div className="text-sm text-white/70">Manage institutional placements</div>
+                  <div>
+                    <label className="block text-white/80 text-sm mb-2">Password</label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        value={formData.password}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })}
+                        className="w-full pl-10 pr-12 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50"
+                        placeholder="••••••••"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white"
+                      >
+                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      </button>
                     </div>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-white/50 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </motion.button>
 
-              {/* Recruiter Card */}
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => handleRoleSelect('RECRUITER')}
-                className="w-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-xl p-4 text-left transition-all group"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-white/20 to-white/10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Building2 className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-white">Recruiter</div>
-                      <div className="text-sm text-white/70">Find verified campus talent</div>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-white/50 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </motion.button>
-            </div>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3 bg-white text-purple-600 rounded-lg font-semibold hover:bg-white/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? 'Please wait...' : (activeTab === 'signin' ? 'Sign In' : 'Sign Up')}
+                  </button>
+                </motion.form>
+              )}
+            </AnimatePresence>
           </motion.div>
         </div>
       </div>
