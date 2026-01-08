@@ -278,7 +278,7 @@ export default function ModernAuthPage() {
                                                 type="text"
                                                 placeholder="Full Name"
                                                 value={formData.name}
-                                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, name: e.target.value })}
                                                 required
                                             />
                                         )}
@@ -288,7 +288,7 @@ export default function ModernAuthPage() {
                                             type="email"
                                             placeholder={selectedRole === 'STUDENT' ? 'College Email' : 'Work Email'}
                                             value={formData.email}
-                                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, email: e.target.value })}
                                             required
                                         />
 
@@ -299,7 +299,7 @@ export default function ModernAuthPage() {
                                                     type="text"
                                                     placeholder="Roll Number"
                                                     value={formData.rollNumber}
-                                                    onChange={(e) => setFormData({ ...formData, rollNumber: e.target.value })}
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, rollNumber: e.target.value })}
                                                     required
                                                 />
 
@@ -307,7 +307,7 @@ export default function ModernAuthPage() {
                                                     <label className="text-white/80 text-sm">Academic Year</label>
                                                     <select
                                                         value={formData.academicYear}
-                                                        onChange={(e) => setFormData({ ...formData, academicYear: parseInt(e.target.value) as 1 | 2 | 3 | 4 })}
+                                                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, academicYear: parseInt(e.target.value) as 1 | 2 | 3 | 4 })}
                                                         className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all"
                                                         required
                                                     >
@@ -325,7 +325,7 @@ export default function ModernAuthPage() {
                                             type={showPassword ? 'text' : 'password'}
                                             placeholder="Password"
                                             value={formData.password}
-                                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })}
                                             required
                                             rightIcon={showPassword ? EyeOff : Eye}
                                             onRightIconClick={() => setShowPassword(!showPassword)}
