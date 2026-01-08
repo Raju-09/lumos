@@ -23,11 +23,14 @@ export default function StudentLayout({
     useEffect(() => {
         const user = localStorage.getItem('lumos_user');
         if (user) {
-            setUserData(JSON.parse(user));
+            const parsedUser = JSON.parse(user);
+            console.log('Layout: Initial user data loaded, avatar:', parsedUser.avatar ? 'Present' : 'Missing');
+            setUserData(parsedUser);
         }
 
         // Listen for profile updates
         const handleProfileUpdate = (event: any) => {
+            console.log('Layout: Received profileUpdated event, avatar:', event.detail.avatar ? 'Present' : 'Missing');
             setUserData(event.detail);
         };
 
