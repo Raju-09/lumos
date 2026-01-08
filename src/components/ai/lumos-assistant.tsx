@@ -23,7 +23,7 @@ export function LumosAssistant() {
         {
             id: "1",
             role: "bot",
-            content: "Hi! I'm Lumos, your AI placement assistant. Ask me about eligibility, interview tips, or company-specific preparation!"
+            content: "Hi! I'm Lumos, your AI placement assistant! 🎯\n\nI can help you with:\n• Interview prep & company tips\n• Resume optimization\n• Eligibility criteria\n• Technical & HR guidance\n• Career advice\n\nWhat would you like to know?"
         }
     ]);
     const [input, setInput] = useState("");
@@ -66,26 +66,41 @@ export function LumosAssistant() {
                         const model = genAI.getGenerativeModel({
                             model: modelName,
                             generationConfig: {
-                                maxOutputTokens: 200, // Limit response length for faster responses
-                                temperature: 0.7, // Balanced creativity
+                                maxOutputTokens: 500, // Allow more detailed responses
+                                temperature: 0.8, // More creative and helpful
                             }
                         });
                         const user = JSON.parse(localStorage.getItem('lumos_user') || '{}');
 
-                        const prompt = `You are Lumos, an expert AI placement assistant for college students in India. Keep responses concise (2-3 sentences max).
+                        const prompt = `You are Lumos, an expert AI placement assistant for college students in India. You're friendly, knowledgeable, and focused on helping students succeed in campus placements.
 
-You help with:
-- Campus placement preparation
-- Interview tips and company-specific advice
-- Resume optimization
-- Eligibility criteria
-- Career guidance
+**Student Context:**
+- Name: ${user.name || "Student"}
+- Year: ${user.academicYear || "Final Year"}
+- Branch: ${user.branch || "Engineering"}
+- CGPA: ${user.cgpa || "N/A"}
 
-Student: ${user.name || "Student"}, Year ${user.academicYear || "Final Year"}
+**Your Expertise:**
+- Campus placement strategies and preparation
+- Company-specific interview tips (TCS, Infosys, Wipro, Google, Microsoft, Amazon, etc.)
+- Resume optimization and ATS best practices
+- Technical interview prep (DSA, System Design, Projects)
+- HR interview guidance and behavioral questions
+- Eligibility criteria interpretation
+- Career path recommendations
 
-Question: "${userMsg.content}"
+**Question:** "${userMsg.content}"
 
-Give a helpful, concise answer. Mention Indian companies (TCS, Infosys, Wipro) or global ones (Google, Microsoft, Amazon) when relevant.`;
+**Instructions:**
+1. Provide actionable, specific advice (3-5 sentences)
+2. Include examples or step-by-step guidance when helpful
+3. Use bullet points for lists
+4. Mention relevant companies or resources
+5. Be encouraging and motivational
+6. If asked about eligibility, explain criteria clearly
+7. For interview prep, give sample questions or topics
+
+Respond in a friendly, professional tone:`;
 
                         const result = await model.generateContent(prompt);
                         reply = result.response.text();
@@ -131,10 +146,12 @@ Give a helpful, concise answer. Mention Indian companies (TCS, Infosys, Wipro) o
     };
 
     const suggestions = [
-        "How do I check if I'm eligible?",
-        "Tips for Google interview",
-        "How to improve my resume?",
-        "What's the placement timeline?"
+        "Am I eligible for this drive?",
+        "How to prepare for Google interview?",
+        "Tips to improve my resume",
+        "Common HR interview questions",
+        "Best DSA topics for placements",
+        "How to handle coding rounds?"
     ];
 
     useEffect(() => {
