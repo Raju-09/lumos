@@ -185,6 +185,17 @@ export default function OpportunitiesPage() {
             return false;
         }
         return true;
+    }).sort((a, b) => {
+        // Prioritize: Eligible & Active > Eligible & Not Applied > Not Eligible
+        // Applied drives stay in their natural position
+        if (a.applied && !b.applied) return -1;
+        if (!a.applied && b.applied) return 1;
+
+        // Then sort by eligibility (eligible first)
+        if (a.eligible && !b.eligible) return -1;
+        if (!a.eligible && b.eligible) return 1;
+
+        return 0;
     });
 
     if (loading) {
