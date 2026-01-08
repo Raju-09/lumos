@@ -6,7 +6,7 @@
 
 import { Component, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
-import { GradientButton } from '../ui/gradient-button';
+import { GradientButton } from './ui/gradient-button';
 
 interface Props {
     children: ReactNode;
@@ -67,9 +67,9 @@ export class ErrorBoundary extends Component<Props, State> {
 
                         <GradientButton
                             variant="danger"
-                            icon={RefreshCw}
+                            icon={<RefreshCw className="w-5 h-5" />}
                             onClick={this.handleReset}
-                            fullWidth
+                            className="w-full"
                         >
                             Try Again
                         </GradientButton>
