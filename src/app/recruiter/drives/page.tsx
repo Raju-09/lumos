@@ -37,15 +37,19 @@ const mockDrives = [
     }
 ];
 
-export default function RecruiterDrivesPage() {
-    const [drives, setDrives] = useState(mockDrives);
+export default function MyDrivesPage() {
     const [search, setSearch] = useState('');
+    const [showFilterModal, setShowFilterModal] = useState(false);
 
-    const filteredDrives = drives.filter(drive =>
-        drive.role.toLowerCase().includes(search.toLowerCase()) ||
-        drive.location.toLowerCase().includes(search.toLowerCase()) ||
-        drive.type.toLowerCase().includes(search.toLowerCase())
-    );
+    // Filter by status or search
+    const filteredDrives = mockDrives.filter(drive => {
+        const lowerCaseSearch = search.toLowerCase();
+        return (
+            drive.role.toLowerCase().includes(lowerCaseSearch) ||
+            drive.location.toLowerCase().includes(lowerCaseSearch) ||
+            drive.type.toLowerCase().includes(lowerCaseSearch)
+        );
+    });
 
     return (
         <div className="min-h-screen p-6 space-y-6 pb-20">
@@ -77,7 +81,10 @@ export default function RecruiterDrivesPage() {
                         onChange={(e) => setSearch(e.target.value)}
                     />
                 </div>
-                <button className="px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                <button
+                    onClick={() => setShowFilterModal(true)}
+                    className="px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300 flex items-center gap-2"
+                >
                     <Filter className="w-4 h-4" />
                     <span>Filter</span>
                 </button>

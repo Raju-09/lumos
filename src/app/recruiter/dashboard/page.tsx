@@ -187,8 +187,18 @@ export default function RecruiterDashboard() {
                 </div>
                 <div className="text-right hidden md:block">
                     <div className="text-sm text-gray-500 dark:text-gray-400">Recruiter Contact</div>
-                    <div className="font-medium text-gray-900 dark:text-white">{mockRecruiterData.hr.name}</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">{mockRecruiterData.hr.email}</div>
+                    <div className="font-medium text-gray-900 dark:text-white">
+                        {(() => {
+                            const user = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('lumos_user') || '{}') : {};
+                            return user.name || 'Recruiter';
+                        })()}
+                    </div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                        {(() => {
+                            const user = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('lumos_user') || '{}') : {};
+                            return user.email || 'recruiter@company.com';
+                        })()}
+                    </div>
                 </div>
             </motion.div>
 

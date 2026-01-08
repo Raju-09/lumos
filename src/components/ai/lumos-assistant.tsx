@@ -28,6 +28,7 @@ export function LumosAssistant() {
     ]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [showSuggestions, setShowSuggestions] = useState(true);
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || "";
@@ -62,7 +63,7 @@ export function LumosAssistant() {
                 for (const modelName of modelsToTry) {
                     if (success) break;
                     try {
-                        const model = genAI.getGenerativeModel({ 
+                        const model = genAI.getGenerativeModel({
                             model: modelName,
                             generationConfig: {
                                 maxOutputTokens: 200, // Limit response length for faster responses
@@ -123,6 +124,18 @@ Give a helpful, concise answer. Mention Indian companies (TCS, Infosys, Wipro) o
             setIsLoading(false);
         }
     };
+
+    const handleSuggestionClick = (suggestion: string) => {
+        setInput(suggestion);
+        setShowSuggestions(false);
+    };
+
+    const suggestions = [
+        "How do I check if I'm eligible?",
+        "Tips for Google interview",
+        "How to improve my resume?",
+        "What's the placement timeline?"
+    ];
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -208,6 +221,25 @@ Give a helpful, concise answer. Mention Indian companies (TCS, Infosys, Wipro) o
                                     </div>
                                 </div>
                             )}
+
+                            {/* Suggestion Chips */}
+                            {showSuggestions && messages.length === 1 && !isLoading && (
+                                <div className="space-y-2">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">I can help you with:</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {suggestions.map((s, i) => (
+                                            <button
+                                                key={i}
+                                                onClick={() => handleSuggestionClick(s)}
+                                                className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors border border-blue-200 dark:border-blue-800"
+                                            >
+                                                {s}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             <div ref={scrollRef} />
                         </div>
 
