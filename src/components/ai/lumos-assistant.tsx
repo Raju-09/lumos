@@ -29,6 +29,7 @@ export function LumosAssistant() {
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(true);
+    const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([]);
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || "";
@@ -115,14 +116,15 @@ Respond in a friendly, professional tone:`;
                 }
             }
 
-            setMessages(prev => [
-                ...prev,
-                {
-                    id: (Date.now() + 1).toString(),
-                    role: "bot",
-                    content: reply
-                }
-            ]);
+            const botMsg = {
+                id: (Date.now() + 1).toString(),
+                role: "bot" as const,
+                content: reply
+            };
+            setMessages(prev => [...prev, botMsg]);
+
+            // Generate dynamic suggestions based on response
+            generateDynamicSuggestions(userMsg.content, reply);
         } catch (error) {
             console.error("AI Error:", error);
             // Use smart fallback instead of error message
@@ -135,9 +137,75 @@ Respond in a friendly, professional tone:`;
                     content: fallbackReply
                 }
             ]);
+
+            // Generate dynamic suggestions for fallback too
+            generateDynamicSuggestions(userMsg.content, fallbackReply);
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const generateDynamicSuggestions = (userQuery: string, aiResponse: string) => {
+        const query = userQuery.toLowerCase();
+        const response = aiResponse.toLowerCase();
+
+        let suggestions: string[] = [];
+
+        // Context-aware suggestions based on topic
+        if (query.includes('eligible') || response.includes('eligib')) {
+            suggestions = [
+                "What documents do I need?",
+                "Can I apply with backlogs?",
+                "How to improve my CGPA?",
+                "When do applications open?"
+            ];
+        } else if (query.includes('interview') || response.includes('interview')) {
+            suggestions = [
+                "Sample interview questions?",
+                "How to answer 'Tell me about yourself'?",
+                "Mock interview tips",
+                "What to wear for interview?"
+            ];
+        } else if (query.includes('resume') || response.includes('resume')) {
+            suggestions = [
+                "Resume format for freshers",
+                "How to add projects?",
+                "ATS-friendly resume tips",
+                "Should I include GPA?"
+            ];
+        } else if (query.includes('google') || query.includes('microsoft') || query.includes('amazon')) {
+            suggestions = [
+                "Coding round difficulty level?",
+                "System design topics to study",
+                "Company culture and work-life",
+                "Salary negotiation tips"
+            ];
+        } else if (query.includes('dsa') || query.includes('coding') || response.includes('algorithm')) {
+            suggestions = [
+                "Best DSA practice platforms?",
+                "Important topics for interviews",
+                "How many problems to solve?",
+                "Time complexity tips"
+            ];
+        } else if (query.includes('hr') || response.includes('behavioral')) {
+            suggestions = [
+                "Common HR questions",
+                "Strengths and weaknesses answer",
+                "Why should we hire you?",
+                "Questions to ask interviewer"
+            ];
+        } else {
+            // Default contextual suggestions
+            suggestions = [
+                "Tell me about placement timeline",
+                "How to prepare in final year?",
+                "Top companies visiting campus",
+                "Internship vs full-time prep"
+            ];
+        }
+
+        setDynamicSuggestions(suggestions);
+        setShowSuggestions(true);
     };
 
     const handleSuggestionClick = (suggestion: string) => {
@@ -239,7 +307,34 @@ Respond in a friendly, professional tone:`;
                                 </div>
                             )}
 
-                            {/* Suggestion Chips */}
+                            {/* Dynamic Suggestion Chips - Show after messages > 1 */}
+                            {showSuggestions && messages.length > 1 && dynamicSuggestions.length > 0 && !isLoading && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="space-y-2"
+                                >
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">💡 You might also want to ask:</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {dynamicSuggestions.slice(0, 4).map((s, i) => (
+                                            <motion.button
+                                                key={i}
+                                                initial={{ opacity: 0, scale: 0.9 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                transition={{ delay: i * 0.05 }}
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                                onClick={() => handleSuggestionClick(s)}
+                                                className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all border border-blue-200 dark:border-blue-800 shadow-sm"
+                                            >
+                                                {s}
+                                            </motion.button>
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {/* Initial Welcome Suggestions - Only on first message */}
                             {showSuggestions && messages.length === 1 && !isLoading && (
                                 <div className="space-y-2">
                                     <p className="text-xs text-gray-500 dark:text-gray-400">I can help you with:</p>
