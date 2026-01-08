@@ -52,7 +52,7 @@ export default function PlacementHistoryPage() {
                 totalApplications: studentApps.length,
                 shortlisted: studentApps.filter(a => a.status === 'Shortlisted' || a.status === 'Selected').length,
                 rejected: studentApps.filter(a => a.status === 'Rejected').length,
-                inProgress: studentApps.filter(a => a.status === 'Applied' || a.status === 'Pending').length
+                inProgress: studentApps.filter(a => a.status === 'Applied').length
             };
 
             setStudentData({ ...student, ...stats });
@@ -244,7 +244,7 @@ function ApplicationEntry({ application, drive }: any) {
             {/* Applied Date */}
             <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
                 <Calendar className="w-3 h-3" />
-                <span>Applied on {new Date(application.appliedDate).toLocaleDateString()}</span>
+                <span>Applied on {new Date(application.appliedAt).toLocaleDateString()}</span>
             </div>
         </div>
     );

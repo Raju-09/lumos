@@ -222,6 +222,17 @@ export class ApplicationService {
         })) as Application[];
     }
 
+    static async getByDriveId(driveId: string): Promise<Application[]> {
+        const q = query(this.collectionRef, where("driveId", "==", driveId));
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            appliedAt: (doc.data().appliedAt as Timestamp).toDate(),
+            updatedAt: (doc.data().updatedAt as Timestamp).toDate()
+        })) as Application[];
+    }
+
     static async create(app: Omit<Application, 'id' | 'appliedAt' | 'updatedAt'>): Promise<Application> {
         const newApp = {
             ...app,
