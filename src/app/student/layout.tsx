@@ -60,7 +60,7 @@ export default function StudentLayout({
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800">
+        <div className="min-h-screen bg-white dark:bg-slate-950">
             {/* Top Header */}
             <div className="bg-slate-900 border-b border-slate-800">
                 <div className="px-6 py-4 flex items-center justify-between">
