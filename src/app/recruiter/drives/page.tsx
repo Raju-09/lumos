@@ -101,6 +101,59 @@ export default function MyDrivesPage() {
                     No drives found matching "{search}"
                 </div>
             )}
+
+            {/* Filter Modal */}
+            {showFilterModal && (
+                <>
+                    <div
+                        className="fixed inset-0 bg-black/50 z-40"
+                        onClick={() => setShowFilterModal(false)}
+                    />
+                    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-slate-900 rounded-xl shadow-2xl p-6 w-full max-w-md z-50 border border-gray-200 dark:border-slate-700">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Filter Drives</h3>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Status
+                                </label>
+                                <select className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white">
+                                    <option>All Status</option>
+                                    <option>Active</option>
+                                    <option>Draft</option>
+                                    <option>Closed</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Type
+                                </label>
+                                <select className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white">
+                                    <option>All Types</option>
+                                    <option>Full-Time</option>
+                                    <option>Internship</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-3 mt-6">
+                            <button
+                                onClick={() => setShowFilterModal(false)}
+                                className="flex-1 px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => setShowFilterModal(false)}
+                                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                            >
+                                Apply
+                            </button>
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 }
