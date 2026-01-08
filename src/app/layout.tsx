@@ -36,7 +36,7 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  const theme = localStorage.getItem('lumos-theme') || 'dark';
+                  const theme = localStorage.getItem('lumos-theme') || 'light';
                   document.documentElement.classList.remove('light', 'dark');
                   document.documentElement.classList.add(theme);
                 } catch (e) {}
@@ -53,7 +53,7 @@ export default function RootLayout({
           <AuthProvider>
             <ThemeProvider
               attribute="class"
-              defaultTheme="dark"
+              defaultTheme="light"
               enableSystem={false}
               disableTransitionOnChange
               storageKey="lumos-theme"

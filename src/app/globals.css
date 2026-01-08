@@ -42,7 +42,7 @@
 
   /* Modern Font Stack - Premium Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  
+
   /* Typography Scale */
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
@@ -52,17 +52,17 @@
   --font-size-2xl: 1.5rem;
   --font-size-3xl: 1.875rem;
   --font-size-4xl: 2.25rem;
-  
+
   /* Line Heights */
   --line-height-tight: 1.25;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
-  
+
   /* Letter Spacing */
   --letter-spacing-tight: -0.025em;
   --letter-spacing-normal: 0;
   --letter-spacing-wide: 0.025em;
-  
+
   /* Spacing Scale */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
@@ -80,64 +80,48 @@
 }
 
 .light {
-  /* Explicit Light Mode Overrides (only if user explicitly toggles to light) */
-  --background: #ffffff;
-  --foreground: #0f172a;
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #4f46e5;
-  --primary-foreground: #ffffff;
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #f1f5f9;
-  --accent-foreground: #0f172a;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
+  /* Purple Gradient Theme for Light Mode */
+  --background: #9333ea;
+  /* Purple base */
+  --foreground: #ffffff;
+  --card: rgba(255, 255, 255, 0.1);
+  --card-foreground: #ffffff;
+  --popover: rgba(255, 255, 255, 0.15);
+  --popover-foreground: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: #9333ea;
+  --secondary: rgba(255, 255, 255, 0.2);
+  --secondary-foreground: #ffffff;
+  --muted: rgba(255, 255, 255, 0.1);
+  --muted-foreground: rgba(255, 255, 255, 0.7);
+  --accent: rgba(255, 255, 255, 0.15);
+  --accent-foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.2);
+  --input: rgba(255, 255, 255, 0.15);
 }
 
 .dark {
-  /* Base Colors - Dark Mode (The Primary Experience) */
-  --background: #020617;
-  /* Slate 950 */
-  --foreground: #f8fafc;
-  /* Slate 50 */
-
-  --card: #0f172a;
-  /* Slate 900 */
-  --card-foreground: #f8fafc;
-
-  --popover: #0f172a;
-  --popover-foreground: #f8fafc;
-
-  --primary: #6366f1;
-  /* Indigo 500 */
+  /* Purple Gradient Theme for Dark Mode */
+  --background: #581c87;
+  /* Darker purple base */
+  --foreground: #ffffff;
+  --card: rgba(255, 255, 255, 0.05);
+  --card-foreground: #ffffff;
+  --popover: rgba(255, 255, 255, 0.1);
+  --popover-foreground: #ffffff;
+  --primary: #a855f7;
   --primary-foreground: #ffffff;
-
   --secondary: #06b6d4;
-  /* Cyan 500 */
   --secondary-foreground: #ffffff;
-
-  --muted: #1e293b;
-  /* Slate 800 */
-  --muted-foreground: #94a3b8;
-  /* Slate 400 */
-
-  --accent: #1e293b;
-  /* Slate 800 */
-  --accent-foreground: #f8fafc;
-
+  --muted: rgba(255, 255, 255, 0.1);
+  --muted-foreground: rgba(255, 255, 255, 0.6);
+  --accent: rgba(255, 255, 255, 0.1);
+  --accent-foreground: #ffffff;
   --destructive: #ef4444;
-  /* Red 500 */
   --destructive-foreground: #ffffff;
-
-  --border: #1e293b;
-  /* Slate 800 */
-  --input: #1e293b;
-  --ring: #6366f1;
+  --border: rgba(255, 255, 255, 0.15);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: #a855f7;
 }
 
 @theme inline {
@@ -202,7 +186,8 @@
 }
 
 body {
-  background-color: var(--background);
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 50%, #6366f1 100%);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-sans);
   font-size: var(--font-size-base);
@@ -210,6 +195,7 @@ body {
   letter-spacing: var(--letter-spacing-normal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
 }
 
 /* Force dark theme on html element */

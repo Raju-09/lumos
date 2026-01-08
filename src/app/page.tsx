@@ -112,8 +112,8 @@ export default function LandingPage() {
               <button
                 onClick={() => setActiveTab('signin')}
                 className={`flex-1 py-2.5 rounded-lg font-medium transition-all ${activeTab === 'signin'
-                    ? 'bg-white text-purple-600 shadow-lg'
-                    : 'text-white/70 hover:text-white'
+                  ? 'bg-white text-purple-600 shadow-lg'
+                  : 'text-white/70 hover:text-white'
                   }`}
               >
                 Sign In
@@ -121,8 +121,8 @@ export default function LandingPage() {
               <button
                 onClick={() => setActiveTab('signup')}
                 className={`flex-1 py-2.5 rounded-lg font-medium transition-all ${activeTab === 'signup'
-                    ? 'bg-white text-purple-600 shadow-lg'
-                    : 'text-white/70 hover:text-white'
+                  ? 'bg-white text-purple-600 shadow-lg'
+                  : 'text-white/70 hover:text-white'
                   }`}
               >
                 Sign Up
