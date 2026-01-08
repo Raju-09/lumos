@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Plus, Search, Filter, Calendar, Users, MapPin, MoreVertical, Briefcase } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, Search, Filter, Calendar, Users, MapPin, MoreVertical, Briefcase, X, Loader2 } from 'lucide-react';
+import { FirestoreDriveService } from '@/lib/firestore-service';
 
 const mockDrives = [
     {
@@ -40,6 +41,37 @@ const mockDrives = [
 export default function MyDrivesPage() {
     const [search, setSearch] = useState('');
     const [showFilterModal, setShowFilterModal] = useState(false);
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [creating, setCreating] = useState(false);
+    const [newDrive, setNewDrive] = useState<{
+        companyName: string;
+        role: string;
+        type: 'Full-Time' | 'Internship' | 'Contract';
+        location: string[];
+        ctcMin: number;
+        ctcMax: number;
+        description: string;
+        eligibility: {
+            cgpaCutoff: number;
+            allowedBranches: string[];
+            maxBacklogs: number;
+        };
+        deadline: string;
+    }>({
+        companyName: '',
+        role: '',
+        type: 'Full-Time',
+        location: [''],
+        ctcMin: 0,
+        ctcMax: 0,
+        description: '',
+        eligibility: {
+            cgpaCutoff: 7.0,
+            allowedBranches: [],
+            maxBacklogs: 0
+        },
+        deadline: ''
+    });
 
     // Filter by status or search
     const filteredDrives = mockDrives.filter(drive => {
@@ -51,6 +83,45 @@ export default function MyDrivesPage() {
         );
     });
 
+    const handleCreateDrive = async () => {
+        setCreating(true);
+        try {
+            const user = JSON.parse(localStorage.getItem('lumos_user') || '{}');
+
+            await FirestoreDriveService.create({
+                ...newDrive,
+                companyName: user.name || newDrive.companyName,
+                status: 'OPEN',
+                logo: newDrive.companyName.charAt(0).toUpperCase(),
+                deadline: new Date(newDrive.deadline)
+            });
+
+            alert('✅ Drive created successfully! Students can now see and apply.');
+            setShowCreateModal(false);
+            // Reset form
+            setNewDrive({
+                companyName: '',
+                role: '',
+                type: 'Full-Time',
+                location: [''],
+                ctcMin: 0,
+                ctcMax: 0,
+                description: '',
+                eligibility: {
+                    cgpaCutoff: 7.0,
+                    allowedBranches: [],
+                    maxBacklogs: 0
+                },
+                deadline: ''
+            });
+        } catch (error) {
+            console.error('Error creating drive:', error);
+            alert('Failed to create drive. Please try again.');
+        } finally {
+            setCreating(false);
+        }
+    };
+
     return (
         <div className="min-h-screen p-6 space-y-6 pb-20">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -58,15 +129,15 @@ export default function MyDrivesPage() {
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white">My Drives</h1>
                     <p className="text-gray-500 dark:text-gray-400">Manage your job postings and applications</p>
                 </div>
-                <button
-                    onClick={() => {
-                        alert('Create New Drive\n\nThis feature will open a modal to create a new campus drive.\n\nIn production, this would:\n- Open a form modal\n- Collect drive details (role, location, eligibility, etc.)\n- Save to Firebase\n- Notify eligible students');
-                    }}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-sm"
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setShowCreateModal(true)}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-lg"
                 >
                     <Plus className="w-4 h-4" />
                     <span>Create New Drive</span>
-                </button>
+                </motion.button>
             </div>
 
             {/* Filters */}
@@ -101,6 +172,194 @@ export default function MyDrivesPage() {
                     No drives found matching "{search}"
                 </div>
             )}
+
+            {/* Create Drive Modal */}
+            <AnimatePresence>
+                {showCreateModal && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm"
+                            onClick={() => !creating && setShowCreateModal(false)}
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-6 w-full max-w-2xl z-50 border border-gray-200 dark:border-slate-700 max-h-[85vh] overflow-y-auto"
+                        >
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Create New Drive</h3>
+                                <button onClick={() => !creating && setShowCreateModal(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                                    <X className="w-5 h-5 text-gray-500" />
+                                </button>
+                            </div>
+
+                            <div className="space-y-5">
+                                {/* Role */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Role Title *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={newDrive.role}
+                                        onChange={(e) => setNewDrive({ ...newDrive, role: e.target.value })}
+                                        placeholder="e.g., Software Engineer"
+                                        className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all"
+                                    />
+                                </div>
+
+                                {/* Type & Location */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Type *
+                                        </label>
+                                        <select
+                                            value={newDrive.type}
+                                            onChange={(e) => setNewDrive({ ...newDrive, type: e.target.value as any })}
+                                            className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                                        >
+                                            <option value="Full-Time">Full-Time</option>
+                                            <option value="Internship">Internship</option>
+                                            <option value="Contract">Contract</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Location *
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={newDrive.location[0]}
+                                            onChange={(e) => setNewDrive({ ...newDrive, location: [e.target.value] })}
+                                            placeholder="e.g., Bangalore"
+                                            className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* CTC Range */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Min CTC (LPA) *
+                                        </label>
+                                        <input
+                                            type="number"
+                                            value={newDrive.ctcMin}
+                                            onChange={(e) => setNewDrive({ ...newDrive, ctcMin: parseFloat(e.target.value) })}
+                                            placeholder="e.g., 8"
+                                            className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Max CTC (LPA) *
+                                        </label>
+                                        <input
+                                            type="number"
+                                            value={newDrive.ctcMax}
+                                            onChange={(e) => setNewDrive({ ...newDrive, ctcMax: parseFloat(e.target.value) })}
+                                            placeholder="e.g., 12"
+                                            className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Eligibility */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Min CGPA *
+                                        </label>
+                                        <input
+                                            type="number"
+                                            step="0.1"
+                                            value={newDrive.eligibility.cgpaCutoff}
+                                            onChange={(e) => setNewDrive({
+                                                ...newDrive,
+                                                eligibility: { ...newDrive.eligibility, cgpaCutoff: parseFloat(e.target.value) }
+                                            })}
+                                            placeholder="e.g., 7.0"
+                                            className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Max Backlogs
+                                        </label>
+                                        <input
+                                            type="number"
+                                            value={newDrive.eligibility.maxBacklogs}
+                                            onChange={(e) => setNewDrive({
+                                                ...newDrive,
+                                                eligibility: { ...newDrive.eligibility, maxBacklogs: parseInt(e.target.value) }
+                                            })}
+                                            placeholder="e.g., 0"
+                                            className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Deadline */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Application Deadline *
+                                    </label>
+                                    <input
+                                        type="date"
+                                        value={newDrive.deadline}
+                                        onChange={(e) => setNewDrive({ ...newDrive, deadline: e.target.value })}
+                                        className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+
+                                {/* Description */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Job Description
+                                    </label>
+                                    <textarea
+                                        value={newDrive.description}
+                                        onChange={(e) => setNewDrive({ ...newDrive, description: e.target.value })}
+                                        placeholder="Enter job description, requirements, responsibilities..."
+                                        rows={4}
+                                        className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 resize-none"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex gap-3 mt-6">
+                                <button
+                                    onClick={() => setShowCreateModal(false)}
+                                    disabled={creating}
+                                    className="flex-1 px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300 transition-colors disabled:opacity-50"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleCreateDrive}
+                                    disabled={creating || !newDrive.role || !newDrive.deadline}
+                                    className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                >
+                                    {creating ? (
+                                        <>
+                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                            Creating...
+                                        </>
+                                    ) : (
+                                        'Create Drive'
+                                    )}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
 
             {/* Filter Modal */}
             {showFilterModal && (
