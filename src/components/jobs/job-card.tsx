@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/context/auth-context";
 import { useData } from "@/context/data-context";
-import { Drive } from "@/types/drive";
+import { Drive } from "@/lib/data-service";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -26,19 +26,19 @@ export function JobCard({ drive }: { drive: Drive }) {
         const student = user as any;
 
         // 1. Check CGPA
-        if (student.cgpa < drive.minCgpa) {
+        if (student.cgpa < drive.eligibility.cgpaCutoff) {
             isEligible = false;
-            ineligibilityReason = `CGPA < ${drive.minCgpa}`;
+            ineligibilityReason = `CGPA < ${drive.eligibility.cgpaCutoff}`;
         }
         // 2. Check Backlogs
-        else if (student.backlogs > drive.maxBacklogs) {
+        else if (student.backlogs > drive.eligibility.maxBacklogs) {
             isEligible = false;
-            ineligibilityReason = `Backlogs > ${drive.maxBacklogs}`;
+            ineligibilityReason = `Backlogs > ${drive.eligibility.maxBacklogs}`;
         }
         // 3. Check Branch
-        else if (!drive.allowedBranches.includes(student.department)) {
+        else if (!drive.eligibility.allowedBranches.includes(student.department)) {
             const stdBranch = student.department === "Computer Science" ? "CSE" : student.department;
-            if (!drive.allowedBranches.includes(stdBranch)) {
+            if (!drive.eligibility.allowedBranches.includes(stdBranch)) {
                 isEligible = false;
                 ineligibilityReason = "Branch not allowed";
             }
@@ -64,7 +64,7 @@ export function JobCard({ drive }: { drive: Drive }) {
                 <CardHeader className="flex flex-row items-start justify-between pb-2">
                     <div className="flex gap-4">
                         <div className="w-12 h-12 rounded-lg bg-accent flex items-center justify-center font-bold text-xl text-primary">
-                            {drive.logo}
+                            {drive.companyName.charAt(0)}
                         </div>
                         <div>
                             <h3 className="font-bold text-lg">{drive.role}</h3>
@@ -82,13 +82,13 @@ export function JobCard({ drive }: { drive: Drive }) {
                 <CardContent className="space-y-4 flex-1">
                     <div className="flex flex-wrap gap-4 text-sm">
                         <div className="flex items-center gap-1.5 bg-accent/50 px-2 py-1 rounded text-muted-foreground">
-                            <MapPin className="w-3 h-3" /> {drive.location}
+                            <MapPin className="w-3 h-3" /> {drive.location.join(', ')}
                         </div>
                         <div className="flex items-center gap-1.5 bg-accent/50 px-2 py-1 rounded text-muted-foreground">
-                            <span className="font-semibold text-foreground">{drive.ctc}</span>
+                            <span className="font-semibold text-foreground">₹{drive.ctcMin}-{drive.ctcMax} LPA</span>
                         </div>
                         <div className="flex items-center gap-1.5 bg-accent/50 px-2 py-1 rounded text-muted-foreground">
-                            <Calendar className="w-3 h-3" /> Ends {drive.deadline}
+                            <Calendar className="w-3 h-3" /> Ends {new Date(drive.deadline).toLocaleDateString()}
                         </div>
                     </div>
 
