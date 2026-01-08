@@ -27,10 +27,9 @@ const nextConfig: NextConfig = {
     optimizeCss: true,
   },
 
-  // Disable the development indicator
+  // Move development indicator to bottom-right (less intrusive)
   devIndicators: {
-    buildActivity: false,
-    buildActivityPosition: 'bottom-right',
+    position: 'bottom-right',
   },
 
   // Headers for better caching
