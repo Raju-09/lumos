@@ -140,10 +140,29 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 export default function RecruiterDashboard() {
     const [search, setSearch] = useState('');
     const [selectedDrive, setSelectedDrive] = useState(mockRecruiterData.activeDrives[0]);
+    const [showFilterModal, setShowFilterModal] = useState(false);
+    const [filters, setFilters] = useState({
+        status: 'all',
+        minCGPA: 0,
+        branch: 'all'
+    });
 
     const filteredStudents = mockStudents.filter(student => {
+        // Search filter
         if (search && !student.name.toLowerCase().includes(search.toLowerCase()) &&
             !student.rollNo.toLowerCase().includes(search.toLowerCase())) {
+            return false;
+        }
+        // Status filter
+        if (filters.status !== 'all' && student.status !== filters.status) {
+            return false;
+        }
+        // CGPA filter
+        if (filters.minCGPA > 0 && student.cgpa < filters.minCGPA) {
+            return false;
+        }
+        // Branch filter
+        if (filters.branch !== 'all' && student.branch !== filters.branch) {
             return false;
         }
         return true;
@@ -274,7 +293,10 @@ export default function RecruiterDashboard() {
                                 </p>
                             </div>
                             <div className="flex gap-3">
-                                <button className="px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                                <button
+                                    onClick={() => setShowFilterModal(true)}
+                                    className="px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2 text-gray-700 dark:text-gray-300"
+                                >
                                     <Filter className="w-4 h-4" />
                                     <span className="hidden sm:inline">Filter</span>
                                 </button>
@@ -357,6 +379,95 @@ export default function RecruiterDashboard() {
                     </div>
                 </div>
             </div>
+
+            {/* Filter Modal */}
+            {showFilterModal && (
+                <>
+                    {/* Backdrop */}
+                    <div
+                        className="fixed inset-0 bg-black/50 z-40"
+                        onClick={() => setShowFilterModal(false)}
+                    />
+
+                    {/* Modal */}
+                    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-slate-900 rounded-xl shadow-2xl p-6 w-full max-w-md z-50 border border-gray-200 dark:border-slate-700">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Filter Candidates</h3>
+
+                        <div className="space-y-4">
+                            {/* Status Filter */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Status
+                                </label>
+                                <select
+                                    value={filters.status}
+                                    onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="all">All Status</option>
+                                    <option value="Applied">Applied</option>
+                                    <option value="Shortlisted">Shortlisted</option>
+                                    <option value="Selected">Selected</option>
+                                </select>
+                            </div>
+
+                            {/* CGPA Filter */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Minimum CGPA
+                                </label>
+                                <input
+                                    type="number"
+                                    step="0.1"
+                                    min="0"
+                                    max="10"
+                                    value={filters.minCGPA}
+                                    onChange={(e) => setFilters({ ...filters, minCGPA: parseFloat(e.target.value) || 0 })}
+                                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                                    placeholder="0.0"
+                                />
+                            </div>
+
+                            {/* Branch Filter */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Branch
+                                </label>
+                                <select
+                                    value={filters.branch}
+                                    onChange={(e) => setFilters({ ...filters, branch: e.target.value })}
+                                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="all">All Branches</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="ME">ME</option>
+                                    <option value="CE">CE</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-3 mt-6">
+                            <button
+                                onClick={() => {
+                                    setFilters({ status: 'all', minCGPA: 0, branch: 'all' });
+                                    setShowFilterModal(false);
+                                }}
+                                className="flex-1 px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors text-gray-700 dark:text-gray-300"
+                            >
+                                Clear Filters
+                            </button>
+                            <button
+                                onClick={() => setShowFilterModal(false)}
+                                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                            >
+                                Apply Filters
+                            </button>
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 }
@@ -477,9 +588,23 @@ function StudentRow({ student, index }: any) {
                         Profile
                     </button>
                     <button
-                        onClick={() => {
-                            // Simulate resume download
-                            alert(`Downloading resume for ${student.name}\n\nNote: In production, this would download from Firebase Storage.\nResume: ${student.resume}`);
+                        onClick={async () => {
+                            try {
+                                // In a real implementation, you would fetch from Firebase Storage
+                                // For now, we'll create a mock download
+                                const resumeUrl = student.resume || '#';
+
+                                if (resumeUrl && resumeUrl !== '#') {
+                                    // Open in new tab or download
+                                    window.open(resumeUrl, '_blank');
+                                } else {
+                                    // Create a mock PDF for demonstration
+                                    alert(`Resume for ${student.name}\n\nResume URL: ${student.resume || 'Not uploaded'}\n\nIn production: This would download from Firebase Storage.`);
+                                }
+                            } catch (error) {
+                                console.error('Error downloading resume:', error);
+                                alert('Error downloading resume');
+                            }
                         }}
                         className="flex-1 sm:flex-none px-3 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors text-sm font-medium flex items-center justify-center gap-1"
                     >
