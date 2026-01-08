@@ -105,6 +105,10 @@ export default function ProfilePage() {
         setSaving(true);
         const updatedUser = { ...userData, ...formData, avatar };
         localStorage.setItem('lumos_user', JSON.stringify(updatedUser));
+
+        // Dispatch custom event to notify layout of profile update
+        window.dispatchEvent(new CustomEvent('profileUpdated', { detail: updatedUser }));
+
         await new Promise(r => setTimeout(r, 500));
         setSaving(false);
         setSaved(true);

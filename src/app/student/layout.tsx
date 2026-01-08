@@ -25,6 +25,17 @@ export default function StudentLayout({
         if (user) {
             setUserData(JSON.parse(user));
         }
+
+        // Listen for profile updates
+        const handleProfileUpdate = (event: any) => {
+            setUserData(event.detail);
+        };
+
+        window.addEventListener('profileUpdated', handleProfileUpdate);
+
+        return () => {
+            window.removeEventListener('profileUpdated', handleProfileUpdate);
+        };
     }, []);
 
     const handleLogout = () => {
